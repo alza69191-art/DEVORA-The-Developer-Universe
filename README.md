@@ -6,7 +6,7 @@ DEVORA is an independent developer platform. The web application uses Next.js an
 
 This repository contains the DEVORA branded web shell, PostgreSQL schema/migrations, migration runner, health endpoints, CI workflow, Forgejo REST adapter, and a Docker Compose stack for Forgejo + PostgreSQL + Caddy with persistent named volumes.
 
-**This is an integration foundation, not a production-ready GitHub replacement.** The current branch now contains account flows, email verification/reset, API-token Git authentication, a permission-checking smart-HTTP gateway, repository CRUD, and R2 upload plumbing. Production launch still requires external services, successful CI, SSH/LFS, isolated CI runners, backup/restore, and end-to-end verification on the deployed stack.
+**This is an integration foundation, not a production-ready GitHub replacement.** The current branch now contains account flows, email verification/reset, API-token Git authentication, a permission-checking smart-HTTP gateway for HTTPS clone/fetch/push, repository CRUD, and R2 upload plumbing with post-upload object verification. Production launch still requires external services, successful CI, SSH/LFS, isolated CI runners, backup/restore, and end-to-end verification on the deployed stack.
 
 ## Infrastructure decisions
 
