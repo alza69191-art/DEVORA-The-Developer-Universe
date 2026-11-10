@@ -14,7 +14,7 @@ export async function GET() {
          FROM devora.repositories r
          LEFT JOIN devora.workspace_members wm ON wm.workspace_id=r.workspace_id AND wm.user_id=$1
          LEFT JOIN devora.repository_collaborators rc ON rc.repository_id=r.id AND rc.user_id=$1
-        WHERE r.visibility='public' OR r.owner_id=$1 OR wm.user_id IS NOT NULL OR rc.user_id IS NOT NULL
+        WHERE r.visibility='public' OR r.owner_id=$1 OR rc.user_id IS NOT NULL OR wm.role IN ('owner','admin') OR (r.visibility='internal' AND wm.user_id IS NOT NULL)
         ORDER BY r.created_at DESC LIMIT 100`,[user.id]
     );
     return NextResponse.json({repositories:result.rows});
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     const slug = name.toLowerCase();
     const existing = await pool.query("SELECT 1 FROM devora.repositories WHERE workspace_id=$1 AND slug=$2",[workspace.rows[0].id,slug]);
     if (existing.rowCount) throw new AuthError("A repository with this name already exists.",409);
-    const remoteRepo = await createForgejoRepository({name:`u${user.id.replace(/-/g,"").slice(0,8)}-${slug}`,description,isPrivate:true,autoInit:true});
+    const remoteRepo = await createForgejoRepository({name:`u${user.id.replace(/-/g,"").slice(0,8)}-${slug}`,description,isPrivate:visibility!=='public',autoInit:true});
     remote = {owner:process.env.FORGEJO_OWNER,name:remoteRepo.name};
     const inserted = await pool.query(
       `INSERT INTO devora.repositories(workspace_id,owner_id,name,slug,description,visibility,default_branch,forgejo_repo_id,forgejo_owner,forgejo_name,forgejo_html_url,clone_url,ssh_url)
