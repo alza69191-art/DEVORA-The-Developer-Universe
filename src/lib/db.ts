@@ -9,7 +9,10 @@ export function getPool(): Pool {
   if (!globalForPg.pgPool) {
     globalForPg.pgPool = new Pool({
       connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : undefined,
+      // Aiven requires TLS. Keep certificate verification enabled in production.
+      ssl: process.env.NODE_ENV === "production"
+        ? { rejectUnauthorized: true }
+        : undefined,
       max: 5,
       idleTimeoutMillis: 30_000,
       connectionTimeoutMillis: 10_000
