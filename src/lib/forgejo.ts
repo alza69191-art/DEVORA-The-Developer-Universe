@@ -127,3 +127,10 @@ export async function listForgejoCommits(owner: string, repo: string, branch = "
 export async function deleteForgejoRepository(owner: string, repo: string): Promise<void> {
   await request<void>(`/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`, { method: "DELETE" });
 }
+
+export async function updateForgejoRepository(owner: string, repo: string, input: { private?: boolean; description?: string }) {
+  return request<ForgejoRepository>(`/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`, {
+    method: "PATCH",
+    body: JSON.stringify(input)
+  });
+}
