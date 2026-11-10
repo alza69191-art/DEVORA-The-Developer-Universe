@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const token = String(body.token ?? "");
     const password = String(body.password ?? "");
-    await enforceRateLimit(`reset:${request.headers.get("x-forwarded-for") ?? "unknown"}`,5,30);
+    await enforceRateLimit(`reset:${sha256(token)}`,5,30);
     if (password.length < 12 || password.length > 128) throw new AuthError("Password must be 12–128 characters.");
     const client = await getPool().connect();
     try {
