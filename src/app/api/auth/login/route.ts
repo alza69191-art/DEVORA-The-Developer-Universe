@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPool } from "@/lib/db";
 import { AuthError, createSession, enforceRateLimit, SESSION_COOKIE, sessionCookieOptions } from "@/lib/auth";
-import { sha256, verifyPassword } from "@/lib/security";
+import { verifyPassword } from "@/lib/security";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const email = String(body.email ?? "").trim().toLowerCase();
     const password = String(body.password ?? "");
-    await enforceRateLimit(`login:${request.headers.get("x-forwarded-for") ?? "unknown"}:${email}`, 10, 15);
+    await enforceRateLimit(`login:${email}`, 10, 15);
     const pool = getPool();
     const result = await pool.query<{id:string;password_hash:string|null;email_verified_at:Date|null;account_status:string}>(
       "SELECT id,password_hash,email_verified_at,account_status FROM devora.users WHERE email=$1",[email]
