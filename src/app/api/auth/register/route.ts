@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPool } from "@/lib/db";
-import { AuthError, enforceRateLimit, createSession, SESSION_COOKIE, sessionCookieOptions } from "@/lib/auth";
+import { AuthError, enforceRateLimit } from "@/lib/auth";
 import { hashPassword, randomToken, sha256, validEmail, validUsername } from "@/lib/security";
 import { sendActionLink } from "@/lib/email";
 
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const email = String(body.email ?? "").trim().toLowerCase();
     const password = String(body.password ?? "");
     const displayName = String(body.displayName ?? "").trim().slice(0, 100);
-    await enforceRateLimit(`register:${request.headers.get("x-forwarded-for") ?? "unknown"}`, 5, 60);
+    await enforceRateLimit(`register:${email}`, 5, 60);
     if (!validUsername(username)) throw new AuthError("Username must be 1–39 characters and use letters, numbers, or internal hyphens.");
     if (!validEmail(email)) throw new AuthError("Enter a valid email address.");
     if (password.length < 12 || password.length > 128) throw new AuthError("Password must be 12–128 characters.");
