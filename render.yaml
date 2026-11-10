@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: devora-platform
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: npm install && npm run build
+    startCommand: npm run db:migrate && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22.16.0
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: APP_URL
+        sync: false
+      - key: FORGEJO_BASE_URL
+        sync: false
+      - key: FORGEJO_API_TOKEN
+        sync: false

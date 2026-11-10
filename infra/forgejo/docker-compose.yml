@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: forgejo
+      POSTGRES_PASSWORD: ${FORGEJO_DB_PASSWORD:?Set FORGEJO_DB_PASSWORD in .env}
+      POSTGRES_DB: forgejo
+    volumes:
+      - forgejo_db:/var/lib/postgresql/data
+    networks: [forgejo]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U forgejo -d forgejo"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:10
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      USER_UID: 1000
+      USER_GID: 1000
+      FORGEJO__database__DB_TYPE: postgres
+      FORGEJO__database__HOST: db:5432
+      FORGEJO__database__NAME: forgejo
+      FORGEJO__database__USER: forgejo
+      FORGEJO__database__PASSWD: ${FORGEJO_DB_PASSWORD:?Set FORGEJO_DB_PASSWORD in .env}
+      FORGEJO__server__DOMAIN: ${FORGEJO_DOMAIN:?Set FORGEJO_DOMAIN in .env}
+      FORGEJO__server__ROOT_URL: https://${FORGEJO_DOMAIN}/
+      FORGEJO__server__HTTP_PORT: 3000
+      FORGEJO__server__SSH_PORT: 2222
+      FORGEJO__security__INSTALL_LOCK: "true"
+    volumes:
+      - forgejo_data:/data
+    ports:
+      - "3000:3000"
+      - "2222:22"
+    networks: [forgejo]
+volumes:
+  forgejo_db:
+  forgejo_data:
+networks:
+  forgejo:
