@@ -10,7 +10,10 @@ if (!process.env.DATABASE_URL) {
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : undefined,
+  // Aiven requires TLS. Keep certificate verification enabled in production.
+  ssl: process.env.NODE_ENV === "production"
+    ? { rejectUnauthorized: true }
+    : undefined,
   max: 1,
   connectionTimeoutMillis: 15000
 });
