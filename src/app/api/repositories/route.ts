@@ -30,12 +30,12 @@ export async function POST(request: NextRequest) {
     const user = await requireUser();
     const origin = request.headers.get("origin");
     if (!process.env.APP_URL || !origin || new URL(origin).origin !== new URL(process.env.APP_URL).origin) return NextResponse.json({error:"Invalid request origin"},{status:403});
-    if (!isForgejoConfigured() || !process.env.FORGEJO_OWNER) return NextResponse.json({error:"Git engine is not configured"},{status:503});
+    if (!process.env.APP_URL || !isForgejoConfigured() || !process.env.FORGEJO_OWNER) return NextResponse.json({error:"Git engine is not configured"},{status:503});
     const body = await request.json();
     const name = String(body.name ?? "").trim();
     const description = String(body.description ?? "").trim().slice(0,500);
     const visibility = body.visibility === "public" ? "public" : "private";
-    if (!/^[a-zA-Z0-9_.-]{1,100}$/.test(name)) throw new AuthError("Repository name must use letters, numbers, dot, underscore or hyphen.");
+    if (!/^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,98}$/.test(name)) throw new AuthError("Repository name must use letters, numbers, dot, underscore or hyphen.");
     const pool = getPool();
     const workspace = await pool.query<{id:string}>("SELECT id FROM devora.workspaces WHERE owner_id=$1 ORDER BY created_at LIMIT 1",[user.id]);
     if (!workspace.rowCount) throw new AuthError("Workspace not found",404);
