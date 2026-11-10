@@ -46,7 +46,7 @@ This establishes the engine integration boundary, not a complete public GitHub r
 - DEVORA authentication, email verification, password reset, session rotation, CSRF protections, and rate limits.
 - Atomic DEVORA repository record + Forgejo provisioning with retry/reconciliation.
 - Per-request repository visibility and collaborator authorization.
-- SSH key registration, large-push streaming tests, and Git LFS.
+- SSH key registration, large-push streaming tests, Git LFS, and quotas.
 - LFS/object storage, quotas, abuse controls, webhook validation, backup/restore.
 - Forgejo Actions runners and isolated build execution. Never run untrusted repository code on the main web host.
-- Migration and integration tests for clone, fetch, push, branches, tags, and large repositories. Configure R2 bucket CORS to allow PUT from the DEVORA app origin and allow the `Content-Type` request header.
+- Migration and integration tests for clone, fetch, push, branches, tags, and large repositories. Configure R2 bucket CORS to allow PUT from the DEVORA app origin and allow the `Content-Type` request header. Upload metadata is only marked complete after a signed HEAD check verifies the actual size and media type.
