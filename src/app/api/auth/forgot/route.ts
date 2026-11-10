@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   if (!process.env.APP_URL || !origin || new URL(origin).origin !== new URL(process.env.APP_URL).origin) return NextResponse.json({error:"Invalid request origin"},{status:403});
   try {
     const email = String((await request.json()).email ?? "").trim().toLowerCase();
-    await enforceRateLimit(`forgot:${request.headers.get("x-forwarded-for") ?? "unknown"}`,5,30);
+    await enforceRateLimit(`forgot:${email}`,5,30);
     if (validEmail(email) && process.env.RESEND_API_KEY && process.env.EMAIL_FROM) {
       const pool = getPool();
       const found = await pool.query<{id:string}>("SELECT id FROM devora.users WHERE email=$1 AND email_verified_at IS NOT NULL AND account_status='active'",[email]);
