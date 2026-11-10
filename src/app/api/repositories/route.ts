@@ -42,13 +42,13 @@ export async function POST(request: NextRequest) {
     const slug = name.toLowerCase();
     const existing = await pool.query("SELECT 1 FROM devora.repositories WHERE workspace_id=$1 AND slug=$2",[workspace.rows[0].id,slug]);
     if (existing.rowCount) throw new AuthError("A repository with this name already exists.",409);
-    const remoteRepo = await createForgejoRepository({name:`u${user.id.replace(/-/g,"").slice(0,8)}-${slug}`,description,isPrivate:visibility!=='public',autoInit:true});
-    remote = {owner:process.env.FORGEJO_OWNER,name:remoteRepo.name};
+    const remoteRepo = await createForgejoRepository({name:`u${user.id.replace(/-/g,"").slice(0,8)}-${slug}`,description,isPrivate:true,autoInit:true});
+    remote = {owner:process.env.FORGEJO_OWNER,name:remoteRepo.name};\n    const cloneUrl = new URL(`/git/${encodeURIComponent(process.env.FORGEJO_OWNER)}/${encodeURIComponent(remoteRepo.name)}.git`, process.env.APP_URL).toString();
     const inserted = await pool.query(
       `INSERT INTO devora.repositories(workspace_id,owner_id,name,slug,description,visibility,default_branch,forgejo_repo_id,forgejo_owner,forgejo_name,forgejo_html_url,clone_url,ssh_url)
        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
        RETURNING id,name,slug,description,visibility,default_branch,clone_url,ssh_url,forgejo_html_url,created_at`,
-      [workspace.rows[0].id,user.id,name,slug,description,visibility,remoteRepo.default_branch,remoteRepo.id,process.env.FORGEJO_OWNER,remoteRepo.name,remoteRepo.html_url,remoteRepo.clone_url,remoteRepo.ssh_url]
+      [workspace.rows[0].id,user.id,name,slug,description,visibility,remoteRepo.default_branch,remoteRepo.id,process.env.FORGEJO_OWNER,remoteRepo.name,remoteRepo.html_url,cloneUrl,null]
     );
     return NextResponse.json({repository:inserted.rows[0]}, {status:201});
   } catch (error) {
