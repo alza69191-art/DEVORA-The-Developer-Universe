@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 type Mode = "login" | "register" | "forgot" | "reset";
 export default function AuthForm({mode}:{mode:Mode}) {
@@ -15,7 +15,7 @@ export default function AuthForm({mode}:{mode:Mode}) {
     event.preventDefault(); setBusy(true); setError(""); setMessage("");
     const data=Object.fromEntries(new FormData(event.currentTarget).entries());
     const endpoint={login:"login",register:"register",forgot:"forgot",reset:"reset"}[mode];
-    if(mode==="reset") data.token=params.get("token")??"";
+    if(mode==="reset") data.token=typeof window!=="undefined"?new URLSearchParams(window.location.search).get("token")??"":"";
     try {
       const response=await fetch(`/api/auth/${endpoint}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
       const result=await response.json();
