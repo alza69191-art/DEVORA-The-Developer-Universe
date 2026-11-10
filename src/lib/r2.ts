@@ -18,7 +18,7 @@ export function isR2Configured() {
   return Boolean(process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY && process.env.R2_BUCKET);
 }
 
-export function signR2Object(method: "PUT" | "GET", key: string, contentType?: string, expiresSeconds = 300) {
+export function signR2Object(method: "PUT" | "GET" | "HEAD", key: string, contentType?: string, expiresSeconds = 300) {
   const { account, access, secret, bucket } = r2Config();
   const region = "auto";
   const service = "s3";
