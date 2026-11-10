@@ -1,7 +1,7 @@
 import { NextRequest,NextResponse } from "next/server";
 import { getPool } from "@/lib/db";
 import { requireUser, requireRepositoryAccess, AuthError } from "@/lib/auth";
-import { getForgejoRepository, getForgejoGitTree, listForgejoBranches, updateForgejoRepository, deleteForgejoRepository } from "@/lib/forgejo";
+import { getForgejoRepository, getForgejoGitTree, listForgejoBranches, updateForgejoRepository, deleteForgejoRepository } from "@/lib/forgejo";\nimport { signR2Object,isR2Configured } from "@/lib/r2";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
