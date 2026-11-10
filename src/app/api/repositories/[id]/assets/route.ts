@@ -12,7 +12,7 @@ export async function GET(_request: NextRequest, context: {params:Promise<{id:st
     const {id}=await context.params;
     await requireRepositoryAccess(id,user.id,"read");
     if (!isR2Configured()) return NextResponse.json({error:"Object storage is not configured"},{status:503});
-    const result=await getPool().query("SELECT id,file_name,content_type,size_bytes,object_key,created_at FROM devora.repository_assets WHERE repository_id=$1 ORDER BY created_at DESC LIMIT 100",[id]);
+    const result=await getPool().query("SELECT id,file_name,content_type,size_bytes,object_key,created_at FROM devora.repository_assets WHERE repository_id=$1 AND uploaded_at IS NOT NULL ORDER BY created_at DESC LIMIT 100",[id]);
     return NextResponse.json({assets:result.rows.map((asset:{object_key:string;[key:string]:unknown})=>({...asset,download:signR2Object("GET",asset.object_key).url}))});
   } catch(error) {
     const status=error instanceof AuthError?error.status:500;
