@@ -3,7 +3,7 @@ services:
     name: devora-platform
     runtime: node
     plan: free
-    branch: main
+    branch: phase-1-platform-core
     buildCommand: npm install && npm run build
     startCommand: npm run db:migrate && npm start
     healthCheckPath: /api/health
