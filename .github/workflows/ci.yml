@@ -17,7 +17,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
       - run: npm install
-      - run: npm run test:security\n      - run: npm run test:git\n      - run: npm run typecheck
+      - run: npm run test:security
+      - run: npm run test:git
+      - run: npm run typecheck
       - run: npm run build
