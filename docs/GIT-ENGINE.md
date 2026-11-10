@@ -38,7 +38,7 @@ The browser should receive only the clone URLs returned for public repositories.
 
 `src/lib/forgejo.ts` is a server-side REST adapter for health checks, repository provisioning, repository metadata, branches, trees, files, and commits. It intentionally does not expose an unauthenticated repository-creation endpoint. Wire its functions into authenticated DEVORA service actions only after the session and repository authorization middleware are implemented.
 
-The Git smart HTTP/SSH traffic goes directly to Forgejo; it must not be proxied through Next.js API routes or Cloudflare Workers.
+Git smart HTTP is proxied through the DEVORA Node route `/git/{forgejo-owner}/{repo}.git`. Git clients authenticate with a DEVORA personal access token (DEVORA username as Basic-auth username, token as password). The gateway hashes and validates the token, checks repository read/write permissions and token scopes, then forwards the stream to the private Forgejo service account. The Forgejo token is never sent to the client. SSH is disabled until per-user SSH key registration is implemented.
 
 ## Current limitations
 
@@ -46,7 +46,7 @@ This establishes the engine integration boundary, not a complete public GitHub r
 - DEVORA authentication, email verification, password reset, session rotation, CSRF protections, and rate limits.
 - Atomic DEVORA repository record + Forgejo provisioning with retry/reconciliation.
 - Per-request repository visibility and collaborator authorization.
-- Private HTTPS Git authentication strategy and SSH key registration.
+- SSH key registration, large-push streaming tests, and Git LFS.
 - LFS/object storage, quotas, abuse controls, webhook validation, backup/restore.
 - Forgejo Actions runners and isolated build execution. Never run untrusted repository code on the main web host.
-- Migration and integration tests for clone, fetch, push, branches, tags, and large repositories.
+- Migration and integration tests for clone, fetch, push, branches, tags, and large repositories. Configure R2 bucket CORS to allow PUT from the DEVORA app origin and allow the `Content-Type` request header.
