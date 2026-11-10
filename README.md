@@ -1,12 +1,12 @@
 # DEVORA — The Developer Universe
 
-DEVORA is an independent developer platform. The web application uses Next.js and PostgreSQL; **Forgejo is the Git engine** for Git smart-HTTP/SSH, repository storage, and Git metadata.
+DEVORA is an independent developer platform. The web application uses Next.js and PostgreSQL; **Forgejo is the Git engine** for Git storage and metadata. DEVORA proxies Git HTTPS requests and enforces its own token scopes and repository ACLs.
 
 ## Current delivery
 
 This repository contains the DEVORA branded web shell, PostgreSQL schema/migrations, migration runner, health endpoints, CI workflow, Forgejo REST adapter, and a Docker Compose stack for Forgejo + PostgreSQL + Caddy with persistent named volumes.
 
-**This is an integration foundation, not a production-ready GitHub replacement.** User authentication, email verification, authorization enforcement, private Git transport, repository provisioning orchestration, CI runners, object storage integration, and security/integration tests remain launch blockers.
+**This is an integration foundation, not a production-ready GitHub replacement.** The current branch now contains account flows, email verification/reset, API-token Git authentication, a permission-checking smart-HTTP gateway, repository CRUD, and R2 upload plumbing. Production launch still requires external services, successful CI, SSH/LFS, isolated CI runners, backup/restore, and end-to-end verification on the deployed stack.
 
 ## Infrastructure decisions
 
