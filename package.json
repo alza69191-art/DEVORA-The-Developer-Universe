@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "db:migrate": "node scripts/migrate.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:security": "node scripts/security-check.mjs",
+    "test:git": "node scripts/test-git.mjs"
   },
   "dependencies": {
     "next": "15.5.29",
