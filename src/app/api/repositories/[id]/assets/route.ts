@@ -22,6 +22,8 @@ export async function GET(_request: NextRequest, context: {params:Promise<{id:st
 
 export async function POST(request:NextRequest,context:{params:Promise<{id:string}>}) {
   try {
+    const origin=request.headers.get("origin");
+    if(!process.env.APP_URL||!origin||new URL(origin).origin!==new URL(process.env.APP_URL).origin)return NextResponse.json({error:"Invalid request origin"},{status:403});
     const user=await requireUser();
     const {id}=await context.params;
     await requireRepositoryAccess(id,user.id,"write");
