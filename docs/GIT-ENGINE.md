@@ -20,8 +20,8 @@ The Docker Compose stack in this folder runs:
 Deploy only on a host with **persistent disk/volumes**, public HTTPS ingress, and inbound SSH access if SSH clone URLs are enabled. A temporary/ephemeral filesystem is not acceptable. Back up both named volumes and test restoration before accepting user repositories.
 
 1. Point DNS A/AAAA record for `FORGEJO_DOMAIN` to the host.
-2. Copy `.env.forgejo.example` to `.env` and set strong unique secrets.
-3. Run `docker compose -f infra/forgejo/docker-compose.yml up -d`.
+2. Copy `infra/forgejo/.env.forgejo.example` to `infra/forgejo/.env` and set strong unique secrets.
+3. From the repository root, run `docker compose --env-file infra/forgejo/.env -f infra/forgejo/docker-compose.yml up -d`.
 4. Open `https://$FORGEJO_DOMAIN` and create the initial administrator account.
 5. Create a dedicated API service account and a scoped token. Store it as `FORGEJO_API_TOKEN` only in the DEVORA server environment.
 6. Set `FORGEJO_BASE_URL=https://$FORGEJO_DOMAIN` in DEVORA.
