@@ -4,9 +4,9 @@ import { requireUser,requireRepositoryAccess,AuthError } from "@/lib/auth";
 import { signR2Object,isR2Configured } from "@/lib/r2";
 
 export const runtime="nodejs";
-export async function POST(_request:NextRequest,context:{params:Promise<{id:string;assetId:string}>}) {
+export async function POST(request:NextRequest,context:{params:Promise<{id:string;assetId:string}>}) {
  try{
-  const origin=_request.headers.get("origin");\n  if(!process.env.APP_URL||!origin||new URL(origin).origin!==new URL(process.env.APP_URL).origin)return NextResponse.json({error:"Invalid request origin"},{status:403});\n  const user=await requireUser();const {id,assetId}=await context.params;
+  const origin=request.headers.get("origin");\n  if(!process.env.APP_URL||!origin||new URL(origin).origin!==new URL(process.env.APP_URL).origin)return NextResponse.json({error:"Invalid request origin"},{status:403});\n  const user=await requireUser();const {id,assetId}=await context.params;
   await requireRepositoryAccess(id,user.id,"write");
   if(!isR2Configured())return NextResponse.json({error:"Object storage is not configured"},{status:503});
   const pool=getPool();
