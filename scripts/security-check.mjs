@@ -10,7 +10,9 @@ const checks = [
   ["verified email required for login", "src/app/api/auth/login/route.ts", /email_verified_at/],
   ["repository write authorization", "src/app/api/repositories/[id]/assets/route.ts", /requireRepositoryAccess\(id,user.id,"write"\)/],
   ["server-only Forgejo token", "src/lib/forgejo.ts", /Authorization: `token ${token}`/],
-  ["R2 presigned uploads", "src/lib/r2.ts", /AWS4-HMAC-SHA256/],\n  ["Git smart HTTP proxy checks API tokens", "src/app/git/[...path]/route.ts", /requireRepositoryAccess/],\n  ["Git proxy enforces write scope", "src/app/git/[...path]/route.ts", /repo:write/]
+  ["R2 presigned uploads", "src/lib/r2.ts", /AWS4-HMAC-SHA256/],
+  ["Git smart HTTP proxy checks API tokens", "src/app/git/[...path]/route.ts", /requireRepositoryAccess/],
+  ["Git proxy enforces write scope", "src/app/git/[...path]/route.ts", /repo:write/]
 ];
 let failed=0;
 for (const [label,path,pattern] of checks) {
